@@ -1,0 +1,92 @@
+## Set working directory
+#setwd("C:/working_directory")
+
+## Load in worm data
+dat <- read.csv("ppa_fis_rups.csv")
+
+
+## Install packages and plot Kaplan-Meier of all data (not separating by species)
+library(survival)
+library(ranger)
+library(ggplot2)
+library(dplyr)
+library(ggfortify)
+library(survminer)
+
+
+## Set variables
+# Max number of days (x axis)
+a <- 50
+# species
+b <- "pacificus_fissidentatus"
+# Experiment
+d <- "ruptures"
+# Individuals in study
+e <- "300+"
+
+
+# Cox proportional hazards
+## Check proportional hazards assumption for Cox PH model 
+# Censor = 'status'
+res.cox = coxph(Surv(dat$time, dat$rups) ~ dat$species, data = dat)
+test.ph = cox.zph(res.cox)
+test.ph
+
+
+
+# Plot Schoenfeld individual test
+sco <- ggcoxzph(test.ph) 
+sco
+
+
+
+## Cox test for sig dif between species
+cox <- coxph(Surv(time, rups) ~ species, data = dat)
+summary(cox)
+
+
+
+
+## Plot Kaplan-Meier of all data 
+km <- with(dat, Surv(time, rups))
+km_fit <- survfit(Surv(time, rups) ~ species, data=dat)
+plot <- autoplot(km_fit, xlab="Time (days)", ylab="Survival probability", 
+         main = paste(b,d,"Kaplan Meier Plot all treatments"), ylim=c(0,1), xlim = c(0,a))
+plot
+
+
+
+# Check number at risk
+res <- ggsurvplot(km_fit, pval = TRUE, conf.int = TRUE,
+                  risk.table = TRUE, break.time.by = 1)
+res$table <- res$table + theme(axis.line = element_blank())
+res$table
+
+
+
+
+## Two separate plots
+tres <- autoplot(survfit(Surv(time, rups) ~ species, data = dat), 
+                 conf.int = TRUE, censor = FALSE, facets = TRUE,
+                 xlab="Time (days)", ylab="", main = "Ruptures") +
+  ylim(c(0, 1.0))
+
+rup_plot <- tres + theme(legend.position = "none",
+                     panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                     panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_x_continuous(expand = c(0.005, 0)) 
+
+rup_plot
+
+
+
+
+
+## Save as png
+ggplot2::ggsave(rup_plot, file=paste(b, d,"n", e, ".svg"), 
+                bg = "white", 
+                width = 4, height = 8, dpi = 1000)
+
+## Save image small
+ggplot2::ggsave(rup_plot, file=paste(b, d,"n", e, "small.svg"), 
+                bg = "white", 
+                width = 2, height = 4, dpi = 1000)
