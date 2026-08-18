@@ -1,0 +1,262 @@
+## For WormLab data 
+## Use a .csv of 'Track summary' data
+
+## Install packages 
+library(rstatix)
+library(dplyr)
+library(ggpubr)
+library(tidyr)
+library(ggplot2)
+theme_set(theme_minimal()) #set ggplot2 aesthetics
+library(svglite)
+library(egg)
+
+
+
+## prepare Ppa-----------------------------------------------------------------------
+
+
+## Set working diretory 
+setwd("C:/Users*")
+
+
+## Load in Track summary file
+dat <- read.csv("ppa_movement_summary_dos.csv")
+
+
+# Make first column into row names
+dat <- data.frame(dat, row.names = 1)
+
+
+# Swap rows and columns
+dat_t = t(dat)
+dat_t = data.frame(dat_t)
+
+
+#Subset necessary columns
+df = subset(dat_t, 
+            select = c(Age, 
+                       Absolute.peristaltic.track.length..um...forward...reversal.,
+                       Peristaltic.speed..um.s...APTL...time.,
+                       Wavelength..um.,
+                       Mean.Amplitude..um.,
+                       Turn.Count))
+
+# Simplify column names
+
+df <- df %>% 
+  rename("tracklength" = "Absolute.peristaltic.track.length..um...forward...reversal.",
+         "peristalsis" = "Peristaltic.speed..um.s...APTL...time.",
+         "wavelength" = "Wavelength..um.",
+         "amp" = "Mean.Amplitude..um.",
+         "turns" = "Turn.Count")
+
+
+
+# Turn columns into numeric 
+df$tracklength = as.numeric(df$tracklength)
+df$peristalsis = as.numeric(df$peristalsis)
+df$wavelength = as.numeric(df$wavelength)
+df$amp = as.numeric(df$amp)
+df$turns = as.numeric(df$turns)
+
+
+#remove peristalsis
+df1 = subset(df, select = -c(peristalsis) )
+
+
+## Multiply turncount by 6 to get turns/min
+df2 <- df1
+df2$turns <- df2$turns*6
+
+
+# Add units to columns
+df2 <- df2 %>% 
+  rename("Track length (µm)" = "tracklength",
+         "Wavelength (µm)" = "wavelength",
+         "Amplitude (µm)" = "amp",
+         "Turns / min" = "turns")
+
+
+#Transform data
+data_long <- gather(df2, metric, value, "Track length (µm)":"Turns / min", factor_key=TRUE)
+paclon <- data_long
+paclon$species <- "P. pacificus"
+
+
+
+
+## prepare Pfis -----------------------------------------------------------------
+
+## Set working diretory 
+setwd("C:/Users/rw617/OneDrive - University of Exeter/rw617/13_movement/Pfis_Age")
+
+## Load in Track summary file
+dat <- read.csv("pfis_movement_summary_dos.csv")
+
+
+# Make first column into row names
+dat <- na.omit(dat)
+dat <- data.frame(dat, row.names = 1)
+
+
+# Swap rows and columns
+dat_t = t(dat)
+dat_t = data.frame(dat_t)
+
+
+#Subset necessary columns
+df = subset(dat_t, 
+            select = c(Age, 
+                       Absolute.peristaltic.track.length..um...forward...reversal.,
+                       Peristaltic.speed..um.s...APTL...time.,
+                       Wavelength..um.,
+                       Mean.Amplitude..um.,
+                       Turn.Count))
+
+# Simplify column names
+
+df <- df %>% 
+  rename("tracklength" = "Absolute.peristaltic.track.length..um...forward...reversal.",
+         "peristalsis" = "Peristaltic.speed..um.s...APTL...time.",
+         "wavelength" = "Wavelength..um.",
+         "amp" = "Mean.Amplitude..um.",
+         "turns" = "Turn.Count")
+
+
+
+# Turn columns into numeric 
+df$tracklength = as.numeric(df$tracklength)
+df$peristalsis = as.numeric(df$peristalsis)
+df$wavelength = as.numeric(df$wavelength)
+df$amp = as.numeric(df$amp)
+df$turns = as.numeric(df$turns)
+
+
+
+#remove peristalsis
+df1 = subset(df, select = -c(peristalsis) )
+
+
+
+## Multiply turncount by 6 to get turns/min
+df2 <- df1
+df2$turns <- df2$turns*6
+
+
+
+# Add units to columns
+df2 <- df2 %>% 
+  rename("Track length (µm)" = "tracklength",
+         "Wavelength (µm)" = "wavelength",
+         "Amplitude (µm)" = "amp",
+         "Turns / min" = "turns")
+
+
+
+#Transform data
+data_long <- gather(df2, metric, value, "Track length (µm)":"Turns / min", factor_key=TRUE)
+fislon <- data_long
+fislon$species <- "P. fissidentatus"
+
+
+
+## All together ----------------------------------------------------------------
+
+## Combine species data ----
+
+all_dat <- rbind(paclon, fislon)
+all_dat$Age <- sub("old", "Old", all_dat$Age)
+
+#write.table(all_dat, file = "all_sp_age_loco_dat.csv")
+
+### Quick stats -----
+
+all_stat <- na.omit(all_dat) %>% 
+  group_by(species, metric, Age) %>%
+  summarise(avg = mean(value), sd = sd(value))
+  
+all_stat
+
+
+
+
+### Plot all------------
+# Order species accordingly
+all_dat$species_f = factor(all_dat$species, levels=c('P. pacificus','P. triformis','P. fissidentatus'))
+
+
+# Plot
+
+p <- ggplot(all_dat, aes(Age, value)) + geom_point() + 
+  geom_boxplot(outlier.colour="red", outlier.shape=1,
+               outlier.size=2) +
+  scale_x_discrete(limits = c("YA", "Old")) +
+  ylab("") +
+  xlab("") +
+  ggtitle("") +
+  theme_bw() 
+  
+
+
+# Use vars() to supply variables from the dataset:
+pl <- p + facet_grid(rows = vars(metric), vars(species_f),
+               scales = "free_y") 
+
+
+
+## Create sig dif labels
+dat_text <- data.frame(
+  species = c('P. pacificus','P. triformis','P. fissidentatus', 
+                'P. pacificus','P. triformis','P. fissidentatus',
+                'P. pacificus','P. triformis','P. fissidentatus',
+                'P. pacificus','P. triformis','P. fissidentatus'),
+  metric = c("Track length (µm)", "Wavelength (µm)","Amplitude (µm)", "Turns / min",
+             "Track length (µm)", "Wavelength (µm)","Amplitude (µm)", "Turns / min",
+             "Track length (µm)", "Wavelength (µm)","Amplitude (µm)", "Turns / min")
+  )
+
+
+
+dat_text$label <- c(
+  "***", "", "***",
+  "***", "", "***",
+  "", "***", "***",
+  "***", "", "***"
+)
+
+dat_text$col <- c(
+  "Homogeneity of variance", "Homogeneity of variance", "Homogeneity of variance",
+  "Mean", "Homogeneity of variance", "Mean",
+  "Homogeneity of variance", "Mean", "Mean",
+  "Mean", "Homogeneity of variance", "Mean")
+                       
+
+dat_text$species_f = factor(dat_text$species, levels=c('P. pacificus','P. triformis','P. fissidentatus'))
+dat_text$metric = factor(dat_text$metric, levels=c("Track length (µm)", "Wavelength (µm)","Amplitude (µm)", "Turns / min"))
+
+
+
+
+meg <- p + facet_grid(rows = vars(metric), vars(species_f),
+               scales = "free_y") + 
+  stat_compare_means(comparisons = list(c("YA", "Old")), 
+                     label = "p.signif",
+                     method = "wilcox.test",
+                     symnum.args = list(cutpoints = c(0, 0.001, 0.01, 0.05, Inf), 
+                                        symbols = c("***", "**", "*", "ns"))) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.25))) 
+
+
+
+meg
+
+
+
+#ggsave(filename = "locomotion_metrics_age.svg",
+ #      width = 9, height = 9, dpi = 1000)
+
+
+
+
+
