@@ -1,0 +1,112 @@
+## FR PpaAges
+## 14/10/2023
+##
+##
+## 
+# Set working directory
+setwd("C:/Users/*s")
+
+# Load in data
+dat <- read.csv("PpaAges_FR.csv")
+
+
+# Turn into data frame format
+dat <- data.frame(dat)
+
+
+# Libraries
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(Hmisc)
+
+
+
+
+# Get averages
+avgs <- dat %>% 
+  group_by(age) %>%
+  summarise(fr_mean = mean(beadsmin),
+            fr_sd = sqrt(var(beadsmin)))
+
+
+avgs <- na.omit(avgs)
+
+
+# Plot
+
+inplot <- ggplot(avgs, aes(x = age, 
+                 y = fr_mean)) + 
+  theme_classic() +
+  theme(axis.line=element_line(size=1), text = element_text(size = 12)) +
+  xlab("Age") +
+  ylab("Beads ingested / min") + 
+  geom_errorbar(aes(ymax=fr_mean+fr_sd, ymin = ifelse(fr_mean-fr_sd < 0, 0, fr_mean-fr_sd)), width=.3, linewidth = 1.25, colour="#00BA38") +
+  geom_point(size=3, colour="#00BA38") +
+  scale_x_discrete(limits = c("ya", "old")) +
+  ylim(0, 250)
+
+inplot
+
+
+
+
+# Stats
+# One-way ANOVA and Tukey test
+
+# DO ANOVA
+res.aov2 <- aov(beadsmin ~ age, data = dat)
+summary(res.aov2)
+
+
+
+
+
+
+
+
+# Add sig fig 
+
+inplot2 <- inplot
+
+# Add titles
+
+inplot3 <- inplot2 + ggtitle("") +
+  theme(plot.title = element_text(size=8)) 
+
+inplot3
+
+
+#ggsave("PpaAgesFR-wide2.png", plot = inplot3, 
+ #      width = 1.7, height = 2, dpi = 500)
+
+
+
+
+
+
+
+## Plotting all points 
+
+plot2 <-ggplot(dat, aes(x = age,
+                         y = beadsmin)) + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(size=1.5, position=position_jitter(width=0.1, height=0.1), col = "#00BA38") +
+  theme_classic() +
+  theme(axis.line=element_line(linewidth=1), text = element_text(size = 12), legend.position = "none") +
+  scale_colour_manual(values = "#00BA38") +
+  xlab("Age") +
+  ylab("Beads ingested / min") + 
+  ylim(0,300) +
+  scale_x_discrete(limits = c("ya", "old")) 
+
+plot2
+
+
+
+inplot2 <- plot2 
+
+inplot2
+
+
+
