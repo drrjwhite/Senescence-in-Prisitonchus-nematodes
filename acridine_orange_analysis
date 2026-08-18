@@ -1,0 +1,57 @@
+## Weighted means and figures for AO analysis 
+## 11/09/2023
+##
+##
+## 
+# Set working directory
+setwd("C:/Users/*")
+
+# Load in data
+dat <- read.csv("ages_AO_data_imj.csv")
+
+
+# Turn into data frame format
+dat <- data.frame(dat)
+
+
+# Libraries
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(Hmisc)
+
+
+
+
+# Get weighted averages
+avgs <- dat %>% 
+  group_by(age, species) %>%
+  summarise(intensity_mean = weighted.mean(intensity, weight_10),
+            intensity_sd = sqrt(wtd.var(intensity, weight_10)))
+
+
+
+
+# Plot
+
+pd <- position_dodge(0.4) # move them .05 to the left and right
+
+avgs <- avgs[!avgs$species == "triformis",]
+
+inplot <- ggplot(avgs, aes(x = age, 
+                 y = intensity_mean, 
+                 group = species,
+                 colour = species)) + 
+  geom_point(size=3, position=pd) +
+  theme_classic() +
+  theme(axis.line=element_line(size=1), text = element_text(size = 12)) +
+  scale_colour_manual(values = c("#F8766D", "#00BA38")) +
+  xlab("Age") +
+  ylab("Intensity score") + 
+  geom_errorbar(aes(ymin=intensity_mean-intensity_sd, ymax=intensity_mean+intensity_sd,), width=.3, linewidth = 1.25, position=pd) +
+  scale_x_discrete(limits = c("ya", "old")) +
+  scale_y_continuous() 
+
+inplot
+
+
