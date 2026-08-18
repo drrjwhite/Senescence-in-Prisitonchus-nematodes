@@ -1,0 +1,131 @@
+## Set wd and load in files -----
+
+setwd("C:/Users/*")
+dat <- read.csv("Ages_smurf_dat.csv")
+
+dat <- data.frame(dat) # Turn into data frame format
+datp <- dat[dat$species == "pacificus",]
+datp %>% levene_test(present ~ age)
+
+
+# Libraries
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(Hmisc)
+
+
+
+# Get weighted averages
+avgs <- dat %>% 
+  group_by(age, species) %>%
+  summarise(present_mean = weighted.mean(present, weight_10),
+            present_sd = sqrt(wtd.var(present, weight_10)))
+
+
+
+# Plot
+pd <- position_dodge(0.4) # move them .05 to the left and right
+
+plot <-ggplot(avgs, aes(x = age,
+                 y = present_mean,
+                 colour = species,
+                 group = species)) + 
+  geom_point(size=2, position=pd) +
+  theme_classic() +
+  theme(axis.line=element_line(linewidth=1), text = element_text(size = 12), legend.position = "none") +
+  scale_colour_manual(values = c("black", "blue", "lightblue")) +
+  xlab("Age") +
+  ylab("% animals with \n body-cavity leakage") + 
+  geom_errorbar(aes(ymin=present_mean-present_sd, ymax=present_mean+present_sd), width=.25, position=pd) +
+  scale_x_discrete(limits = c("ya", "old")) +
+  scale_y_continuous() 
+
+plot
+
+
+
+## Weighted mean
+# DO ANOVA
+res.aov2 <- aov(present ~ age * species, data = dat, weights = weight_10)
+summary(res.aov2)
+
+#TukeyHSD(res.aov2, which = "species")
+
+
+
+
+
+
+
+
+## Just Ppa
+
+pac <- subset(dat, species == "pacificus",
+              select=c(age, present, n, weight_10))
+
+pac2 <- pac %>% 
+  group_by(age) %>%
+  summarise(present_mean = weighted.mean(present, weight_10),
+            present_sd = sqrt(wtd.var(present, weight_10)))
+
+
+pac3 <- ggplot(pac2, aes(x = age,
+                        y = present_mean)) +
+  theme_classic() +
+  theme(axis.line=element_line(size=1), text = element_text(size = 12)) +
+  ylim(0,106) +
+  xlab("treatment") +
+  ylab("% animals with \n body-cavity leakage \n") + 
+  geom_errorbar(aes(ymin=present_mean-present_sd, ymax=present_mean+present_sd), width=.1) + 
+  geom_point(size=2, colour = "blue2") +
+  scale_x_discrete(limits = c("ya", "old")) +
+  ggtitle("", subtitle = "P. pac \n15/10/23")
+
+pac3
+
+mod <- lm(present ~ age, pac, weights = weight_10)
+summary(mod)
+
+
+
+
+
+
+
+
+
+## Plotting all points - Ppa and Pfis only
+
+pd <- position_dodge(0.4) # move them .05 to the left and right
+
+plot2 <-ggplot(dat2, aes(x = age,
+                        y = present,
+                        colour = species,
+                        group = species)) + 
+  geom_point(size=2, position=pd) +
+  theme_classic() +
+  theme(axis.line=element_line(linewidth=1), text = element_text(size = 12), legend.position = "none") +
+  scale_colour_manual(values = c("#F8766D", "#00BA38")) +
+  xlab("Age") +
+  ylab("Animals with body cavity\nleakage (%)") + 
+#  geom_errorbar(aes(ymin=present_mean-present_sd, ymax=present_mean+present_sd), width=.25, position=pd) +
+  scale_x_discrete(limits = c("ya", "old")) +
+  scale_y_continuous() 
+
+plot2
+
+
+legs <- get_legend(ggplot(dat2, aes(x = age,
+                                    y = present,
+                                    colour = species,
+                                    group = species)) + 
+                     geom_point(size=2, position=pd) +
+                     theme_classic() +
+                     scale_colour_manual(name = "Species", values = c("#F8766D", "#00BA38")))
+
+
+smurf2 <- plot2 
+
+plot_grid(smurf2, legs, 
+          rel_widths = c(1,.4))
