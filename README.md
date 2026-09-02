@@ -1,8 +1,4 @@
-# Project Title
-
-Senescence in _Pristionchus_ nematodes 
-
-## Description
+# Senescence in _Pristionchus_ nematodes 
 
 This repository contains the R scripts for data analysis and corresponding .csv data files for the manuscript entitled "Conserved and diverged patterns of senescence in _Pristionchus_ nematodes". 
 
