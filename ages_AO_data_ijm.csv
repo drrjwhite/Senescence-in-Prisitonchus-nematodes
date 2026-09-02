@@ -1,0 +1,64 @@
+batch,File name,species,age,intensity_man_text,intensity_man
+Ages3,ppa-ages3-ya (1,pacificus,ya,Moderate,3
+Ages3,ppa-ages3-ya (2,pacificus,ya,Minimal,1
+Ages3,ppa-ages3-ya (3,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (4,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (5,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (6,pacificus,ya,Minimal,1
+Ages3,ppa-ages3-ya (7,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (8,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (9,pacificus,ya,Moderate,3
+Ages3,ppa-ages3-ya (10,pacificus,ya,Faint,2
+Ages3,ppa-ages3-ya (11,pacificus,ya,Minimal,1
+Ages3,ppa-ages3-ya (12,pacificus,ya,Minimal,1
+Ages3,ppa-ages3-old (1,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (2,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (3,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (4,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (5,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (6,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (7,pacificus,old,Extreme,5
+Ages3,ppa-ages3-old (8,pacificus,old,Minimal,1
+Ages3,ppa-ages3-old (8,pacificus,old,Strong,4
+Ages4,ppa-ages4-ya-3,pacificus,ya,Minimal,1
+Ages4,ppa-ages4-ya-4,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-7,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-8,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-9,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-10,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-11,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-12,pacificus,ya,Minimal,1
+Ages4,ppa-ages4-ya-17,pacificus,ya,Minimal,1
+Ages4,ppa-ages4-ya-18,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-19,pacificus,ya,Faint,2
+Ages4,ppa-ages4-ya-20,pacificus,ya,Minimal,1
+Ages4,ppa-ages4-old-2,pacificus,old,Moderate,3
+Ages4,ppa-ages4-old-4,pacificus,old,Strong,4
+Ages4,ppa-ages4-old-5,pacificus,old,Moderate,3
+Ages4,ppa-ages4-old-6,pacificus,old,Moderate,3
+Ages4,ppa-ages4-old-7,pacificus,old,Moderate,3
+Ages4,ppa-ages4-old-8,pacificus,old,Faint,2
+Ages4,ppa-ages4-old-9,pacificus,old,Strong,4
+Ages5,ya1,pacificus,ya,Strong,4
+Ages5,ya2,pacificus,ya,Minimal,1
+Ages5,ya3,pacificus,ya,Faint,2
+Ages5,ya4,pacificus,ya,Faint,2
+Ages5,ya5,pacificus,ya,Faint,2
+Ages5,ya6,pacificus,ya,Moderate,3
+Ages5,ya7,pacificus,ya,Moderate,3
+Ages5,old1,pacificus,old,Extreme,5
+Ages5,old2,pacificus,old,Strong,4
+Ages5,old3,pacificus,old,Extreme,5
+1,Pfis_YA-tritc1-same-,fissidentatus,ya,Faint,2
+1,Pfis_YA-tritc2,fissidentatus,ya,Moderate,3
+1,Pfis-YA3,fissidentatus,ya,Moderate,3
+1,fisoa_0,fissidentatus,old,Strong,4
+1,fisold1,fissidentatus,old,Extreme,5
+1,fisold2,fissidentatus,old,Strong,4
+1,fisold3,fissidentatus,old,Strong,4
+3,fisya1,fissidentatus,ya,Strong,4
+3,fisya2,fissidentatus,ya,Faint,2
+3,fisya3,fissidentatus,ya,Extreme,5
+3,fisold1,fissidentatus,old,Moderate,3
+3,fisold2,fissidentatus,old,Moderate,3
+3,fisold3,fissidentatus,old,Strong,4

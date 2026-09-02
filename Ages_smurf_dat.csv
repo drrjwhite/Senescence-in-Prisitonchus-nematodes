@@ -1,0 +1,13 @@
+batch,species,age,present,n
+1,pacificus,ya,0,14
+1,pacificus,old,20,15
+2,pacificus,ya,6.3,16
+2,pacificus,old,57.1,7
+3,pacificus,ya,25,4
+3,pacificus,old,36.8,19
+1,fissidentatus,ya,29.4,17
+1,fissidentatus,old,33.3,3
+2,fissidentatus,ya,16.7,24
+2,fissidentatus,old,35.7,28
+3,fissidentatus,ya,11.1,36
+3,fissidentatus,old,35.3,17
